@@ -268,6 +268,22 @@
       <!-- ========================================================================= -->
       <div id="view-quiz" class="hidden space-y-5">
         
+        <!-- Banner Notifikasi Pemulihan Pengerjaan Terakhir Otomatis -->
+        <div id="resume-toast" class="hidden p-3.5 rounded-2xl bg-blue-600 text-white shadow-md text-xs sm:text-sm flex items-center justify-between transition-all duration-300 transform -translate-y-2">
+          <div class="flex items-center space-x-2.5">
+            <div class="w-7 h-7 rounded-xl bg-white/20 flex items-center justify-center flex-shrink-0">
+              <i class="fa-solid fa-clock-rotate-left text-white text-xs sm:text-sm"></i>
+            </div>
+            <div>
+              <span class="font-bold block">Pengerjaan Terakhir Dipulihkan Otomatis!</span>
+              <span class="text-blue-100 text-xs">Anda langsung diarahkan kembali ke nomor dan jawaban terakhir saat keluar tab.</span>
+            </div>
+          </div>
+          <button type="button" onclick="dismissResumeToast()" class="text-white/80 hover:text-white ml-3 p-1">
+            <i class="fa-solid fa-xmark text-sm"></i>
+          </button>
+        </div>
+
         <!-- Top Navigation Number Grid -->
         <div class="bg-white rounded-2xl shadow-xs border border-slate-200 p-4">
           <div class="flex items-center justify-between mb-3">
@@ -787,6 +803,7 @@
     let userAnswers = {};
     let studentInfo = { name: '', class: '' };
     let timeRemaining = 15 * 60; // 15 menit (900 detik)
+    let examEndTime = null; // Timestamp target waktu ujian berakhir (sinkron dengan jam perangkat)
     let timerInterval = null;
     let examSubmitted = false;
 
@@ -803,23 +820,31 @@
       timerWrapper.classList.remove('hidden');
       timerWrapper.classList.add('flex');
 
-      timerInterval = setInterval(() => {
-        if (timeRemaining > 0) {
-          timeRemaining--;
-          timerDisplay.textContent = formatTime(timeRemaining);
+      // Tentukan target waktu selesai jika belum dihitung
+      if (!examEndTime) {
+        examEndTime = Date.now() + (timeRemaining * 1000);
+      }
 
-          // Peringatan visual saat waktu tersisa kurang dari 2 menit
-          if (timeRemaining <= 120) {
-            timerWrapper.className = 'flex items-center px-3 py-1.5 rounded-xl bg-rose-100 border border-rose-300 text-rose-700 font-mono font-bold text-xs sm:text-sm animate-pulse';
-          }
+      const updateCountdown = () => {
+        const remainingMs = examEndTime - Date.now();
+        timeRemaining = Math.max(0, Math.ceil(remainingMs / 1000));
+        timerDisplay.textContent = formatTime(timeRemaining);
 
-          // Simpan sisa waktu secara otomatis
-          persistExamSession();
-        } else {
-          // Waktu 15 menit habis
+        // Peringatan visual saat waktu tersisa kurang dari 2 menit
+        if (timeRemaining <= 120) {
+          timerWrapper.className = 'flex items-center px-3 py-1.5 rounded-xl bg-rose-100 border border-rose-300 text-rose-700 font-mono font-bold text-xs sm:text-sm animate-pulse';
+        }
+
+        if (timeRemaining <= 0) {
           clearInterval(timerInterval);
           handleTimeExpired();
         }
+      };
+
+      updateCountdown();
+      timerInterval = setInterval(() => {
+        updateCountdown();
+        persistExamSession();
       }, 1000);
     }
 
@@ -890,30 +915,76 @@
     async function checkSavedDraftSession() {
       const draft = await dbGet('tka_active_draft');
       if (draft && !draft.isFinished && draft.studentName) {
-        document.getElementById('autosave-restore-banner').classList.remove('hidden');
+        return draft;
+      }
+      return null;
+    }
+
+    function showResumeToast() {
+      const toast = document.getElementById('resume-toast');
+      if (toast) {
+        toast.classList.remove('hidden');
+        requestAnimationFrame(() => {
+          toast.classList.remove('-translate-y-2');
+          toast.classList.add('translate-y-0');
+        });
+        setTimeout(() => {
+          dismissResumeToast();
+        }, 5000);
       }
     }
 
-    async function resumeSavedSession() {
-      const draft = await dbGet('tka_active_draft');
+    function dismissResumeToast() {
+      const toast = document.getElementById('resume-toast');
+      if (toast) {
+        toast.classList.add('-translate-y-2', 'opacity-0');
+        setTimeout(() => {
+          toast.classList.add('hidden');
+          toast.classList.remove('opacity-0');
+        }, 300);
+      }
+    }
+
+    async function resumeSavedSession(draftData = null) {
+      const draft = draftData || await dbGet('tka_active_draft');
       if (!draft) return;
 
       studentInfo = { name: draft.studentName, class: draft.studentClass };
       userAnswers = draft.userAnswers || {};
-      timeRemaining = draft.timeRemaining !== undefined ? draft.timeRemaining : 15 * 60;
-      currentQuestionIndex = draft.currentQuestionIndex || 0;
+      currentQuestionIndex = (draft.currentQuestionIndex !== undefined) ? draft.currentQuestionIndex : 0;
 
-      document.getElementById('input-student-name').value = studentInfo.name;
-      document.getElementById('select-student-class').value = studentInfo.class;
+      // Hitung kembali sisa waktu aktual berdasarkan timestamp jam perangkat
+      if (draft.examEndTime) {
+        examEndTime = draft.examEndTime;
+        const remainingSeconds = Math.round((draft.examEndTime - Date.now()) / 1000);
+        if (remainingSeconds <= 0) {
+          timeRemaining = 0;
+          finalizeQuizResults(true);
+          return;
+        } else {
+          timeRemaining = remainingSeconds;
+        }
+      } else {
+        timeRemaining = draft.timeRemaining !== undefined ? draft.timeRemaining : 15 * 60;
+        examEndTime = Date.now() + (timeRemaining * 1000);
+      }
 
+      const nameInput = document.getElementById('input-student-name');
+      const classSelect = document.getElementById('select-student-class');
+      if (nameInput) nameInput.value = studentInfo.name;
+      if (classSelect) classSelect.value = studentInfo.class;
+
+      // Otomatis langsung membuka ruang soal tanpa menunggu di welcoming page
       document.getElementById('view-welcome').classList.add('hidden');
       document.getElementById('view-result').classList.add('hidden');
+      document.getElementById('view-schedule-locked').classList.add('hidden');
       document.getElementById('view-quiz').classList.remove('hidden');
       window.scrollTo({ top: 0, behavior: 'smooth' });
 
       startTimer();
       renderNavButtons();
       renderQuestion(currentQuestionIndex);
+      showResumeToast();
     }
 
     async function persistExamSession() {
@@ -924,6 +995,7 @@
         studentClass: studentInfo.class,
         userAnswers: userAnswers,
         timeRemaining: timeRemaining,
+        examEndTime: examEndTime,
         currentQuestionIndex: currentQuestionIndex
       };
       await dbSave('tka_active_draft', draftData);
@@ -963,6 +1035,7 @@
       errorBox.classList.add('hidden');
       studentInfo.name = nameVal;
       studentInfo.class = classVal;
+      examEndTime = Date.now() + (15 * 60 * 1000); // 15 Menit dari waktu mulai
 
       document.getElementById('view-welcome').classList.add('hidden');
       document.getElementById('view-result').classList.add('hidden');
@@ -1488,13 +1561,45 @@
       const hasCompleted = await checkExistingCompletedExam();
       if (hasCompleted) return;
 
-      // 3. Cek apakah ada draf sesi pengerjaan tersimpan sebelumnya (autosave)
-      await checkSavedDraftSession();
+      // 3. Otomatis masuk ke pengerjaan dan nomor soal terakhir saat membuka web kembali
+      const savedDraft = await checkSavedDraftSession();
+      if (savedDraft) {
+        await resumeSavedSession(savedDraft);
+      }
 
       // Render MathJax jika ada formula awal
       if (window.MathJax && window.MathJax.typesetPromise) {
         window.MathJax.typesetPromise();
       }
+    });
+
+    // Deteksi otomatis saat siswa berganti tab, meminimalkan aplikasi, atau kembali ke tab
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'hidden') {
+        // Tab ditinggalkan: simpan progres dan sisa waktu seketika ke IndexedDB
+        persistExamSession();
+      } else if (document.visibilityState === 'visible' && !examSubmitted && studentInfo.name) {
+        // Siswa kembali ke tab: sinkronkan sisa waktu aktual berdasarkan wall-clock timer
+        if (examEndTime) {
+          const remainingSeconds = Math.round((examEndTime - Date.now()) / 1000);
+          if (remainingSeconds <= 0) {
+            handleTimeExpired();
+          } else {
+            timeRemaining = remainingSeconds;
+            const timerDisplay = document.getElementById('timer-display');
+            if (timerDisplay) timerDisplay.textContent = formatTime(timeRemaining);
+          }
+        }
+      }
+    });
+
+    // Simpan progres seketika saat halaman ditutup atau di-refresh
+    window.addEventListener('pagehide', () => {
+      persistExamSession();
+    });
+
+    window.addEventListener('beforeunload', () => {
+      persistExamSession();
     });
   </script>
 </body>

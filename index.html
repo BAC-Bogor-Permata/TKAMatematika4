@@ -1,0 +1,1501 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Persiapan TKA 2026 - BAC Bogor Permata</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <!-- Canvas Confetti CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+
+  <!-- MathJax Configuration for LaTeX Expressions -->
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']],
+        processEscapes: true
+      },
+      options: {
+        skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    };
+  </script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+  <!-- Tailwind Theme Customization -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+          },
+          colors: {
+            bac: {
+              blue: '#1D4ED8',
+              navy: '#0F172A',
+              lightBlue: '#EFF6FF',
+              amber: '#F59E0B',
+              emerald: '#10B981',
+              rose: '#EF4444'
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+    .latex-content {
+      overflow-x: auto;
+      max-width: 100%;
+    }
+    .latex-content::-webkit-scrollbar {
+      height: 4px;
+    }
+    .latex-content::-webkit-scrollbar-thumb {
+      background: #CBD5E1;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+
+<body class="bg-slate-50 text-slate-800 flex flex-col min-h-screen antialiased selection:bg-blue-200">
+
+  <!-- Top Navigation Header -->
+  <header class="bg-white border-b border-slate-200 sticky top-0 z-40 shadow-xs">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+      <!-- Mandatory Left Header Title -->
+      <div class="flex items-center space-x-3">
+        <div class="w-9 h-9 rounded-xl bg-blue-600 text-white flex items-center justify-center font-bold shadow-sm shadow-blue-500/20">
+          <i class="fa-solid fa-graduation-cap text-base"></i>
+        </div>
+        <div>
+          <span class="text-sm sm:text-base font-bold text-slate-800 tracking-tight block">
+            BAC Bogor - Permata (Persiapan TKA 2026)
+          </span>
+          <span class="text-xs text-blue-600 font-medium hidden sm:block">
+            Modul Latihan Mandiri: Matematika (Trigonometri)
+          </span>
+        </div>
+      </div>
+
+      <!-- Right Header Indicators (Timer and Period Badge) -->
+      <div class="flex items-center space-x-2">
+        <!-- 15-Minute Countdown Timer Badge (Visible during active quiz) -->
+        <div id="exam-timer-wrapper" class="hidden items-center px-3 py-1.5 rounded-xl bg-slate-100 border border-slate-200 text-slate-700 font-mono font-bold text-xs sm:text-sm">
+          <i class="fa-solid fa-stopwatch text-blue-600 mr-1.5"></i>
+          <span id="timer-display">15:00</span>
+        </div>
+
+        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200">
+          <i class="fa-regular fa-calendar-check mr-1.5 text-blue-500"></i> 21 - 27 Sept 2026
+        </span>
+      </div>
+    </div>
+  </header>
+
+  <main class="flex-grow flex items-center justify-center p-4 sm:p-6 md:p-8">
+    <div class="w-full max-w-4xl mx-auto">
+
+      <!-- ========================================================================= -->
+      <!-- SECTION 0: DEADLINE ACCESS LOCK VIEW (TAMPIL HANYA JIKA DILUAR PERIODE) -->
+      <!-- ========================================================================= -->
+      <div id="view-schedule-locked" class="hidden bg-white rounded-3xl shadow-sm border border-slate-200 p-8 text-center space-y-4">
+        <div class="w-16 h-16 rounded-3xl bg-amber-50 text-amber-600 flex items-center justify-center mx-auto text-2xl">
+          <i class="fa-solid fa-calendar-xmark"></i>
+        </div>
+        <h2 id="schedule-locked-title" class="text-2xl font-bold text-slate-900">Akses Latihan Belum Dibuka</h2>
+        <p id="schedule-locked-desc" class="text-slate-600 text-sm sm:text-base max-w-lg mx-auto">
+          Latihan TKA 2026 Matematika - Trigonometri hanya dapat diakses selama periode tanggal <strong>21 - 27 September 2026</strong>.
+        </p>
+      </div>
+
+      <!-- ========================================================================= -->
+      <!-- SECTION 1: WELCOMING PAGE -->
+      <!-- ========================================================================= -->
+      <div id="view-welcome" class="space-y-6">
+        
+        <!-- Autosave Recovery Notification Banner -->
+        <div id="autosave-restore-banner" class="hidden p-4 rounded-2xl bg-blue-50 border border-blue-200 text-blue-900 flex items-center justify-between">
+          <div class="flex items-center space-x-3">
+            <i class="fa-solid fa-cloud-arrow-down text-blue-600 text-lg"></i>
+            <div>
+              <p class="font-bold text-xs sm:text-sm">Sesi Pengerjaan Tersimpan Ditemukan!</p>
+              <p class="text-xs text-blue-700">Kami mendeteksi draf pengerjaan Anda sebelumnya yang belum selesai.</p>
+            </div>
+          </div>
+          <button onclick="resumeSavedSession()" class="px-3.5 py-1.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl text-xs shadow-sm transition">
+            Lanjutkan Pengerjaan
+          </button>
+        </div>
+
+        <div class="bg-white rounded-3xl shadow-sm border border-slate-200 p-6 sm:p-10 relative overflow-hidden">
+          <div class="absolute top-0 right-0 -mt-10 -mr-10 w-44 h-44 bg-blue-100 rounded-full blur-2xl opacity-70 pointer-events-none"></div>
+
+          <div class="relative z-10 space-y-6">
+            <!-- Mandatory Blue Bold Title with Sans-Serif font -->
+            <div class="border-b border-slate-100 pb-5">
+              <div class="inline-flex items-center space-x-2 text-xs font-bold uppercase tracking-wider text-blue-600 bg-blue-50 px-3 py-1 rounded-lg mb-2">
+                <i class="fa-solid fa-fire"></i>
+                <span>Simulasi Latihan Mingguan</span>
+              </div>
+              <h1 class="text-3xl sm:text-4xl font-extrabold text-blue-600 tracking-tight font-sans">
+                Persiapan TKA 2026
+              </h1>
+              <p class="text-slate-500 text-sm sm:text-base mt-1">
+                Materi Fokus: <span class="font-semibold text-slate-700">Trigonometri (Perbandingan, Kuadran, dan Identitas)</span>
+              </p>
+            </div>
+
+            <!-- Mandatory Rules Section -->
+            <div class="bg-slate-50 border border-slate-200 rounded-2xl p-5 sm:p-6 space-y-4">
+              <h2 class="text-base sm:text-lg font-bold text-slate-900 flex items-center">
+                <i class="fa-solid fa-clipboard-list text-blue-600 mr-2.5 text-lg"></i>
+                Aturan Pengerjaan Soal Latihan
+              </h2>
+
+              <ol class="space-y-3.5 text-slate-700 text-sm sm:text-base pl-2">
+                <li class="flex items-start">
+                  <span class="flex-shrink-0 w-6 h-6 rounded-full bg-blue-100 text-blue-700 font-bold text-xs flex items-center justify-center mr-3 mt-0.5">1</span>
+                  <span>Latihan akan terbuka untuk dikerjakan selama periode <strong>21 - 27 September 2026</strong>.</span>
+                </li>
+                <li class="flex items-start">
+                  <span class="flex-shrink-0 w-6 h-6 rounded-full bg-blue-100 text-blue-700 font-bold text-xs flex items-center justify-center mr-3 mt-0.5">2</span>
+                  <span>Jawaban hanya bisa diklik <strong>1 kali</strong> ya dan pembahasan soal akan muncul setelah periode latihan berakhir.</span>
+                </li>
+                <li class="flex items-start">
+                  <span class="flex-shrink-0 w-6 h-6 rounded-full bg-blue-100 text-blue-700 font-bold text-xs flex items-center justify-center mr-3 mt-0.5">3</span>
+                  <span>Pada akhir latihan ini, siswa dapat langsung melihat <strong>skor akhir dan analisisnya</strong>.</span>
+                </li>
+              </ol>
+
+              <!-- Mandatory Motivational Quote for Brainies -->
+              <div class="mt-4 pt-4 border-t border-slate-200/80 bg-blue-50/60 rounded-xl p-4 border-l-4 border-blue-500">
+                <p class="text-blue-900 font-medium italic text-sm sm:text-base">
+                  "Semangat terus ya, Brainies! Kita berikan usaha yang maksimal untuk hasil TKA yang memuaskan ya teman-teman."
+                </p>
+              </div>
+            </div>
+
+            <!-- Form Identitas Siswa -->
+            <div class="bg-white border-2 border-blue-100 rounded-2xl p-5 sm:p-6 space-y-4 shadow-xs">
+              <div class="flex items-center space-x-2 text-slate-800 font-bold text-base">
+                <i class="fa-solid fa-id-card text-blue-600"></i>
+                <span>Data Identitas Siswa</span>
+              </div>
+              
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div class="space-y-1.5">
+                  <label for="input-student-name" class="block text-xs font-bold uppercase tracking-wider text-slate-600">
+                    Nama Lengkap Siswa <span class="text-rose-500">*</span>
+                  </label>
+                  <div class="relative">
+                    <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-slate-400">
+                      <i class="fa-regular fa-user"></i>
+                    </span>
+                    <input 
+                      type="text" 
+                      id="input-student-name" 
+                      placeholder="Masukkan nama lengkap..." 
+                      class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm text-slate-800 placeholder-slate-400 font-medium transition"
+                    >
+                  </div>
+                </div>
+
+                <div class="space-y-1.5">
+                  <label for="select-student-class" class="block text-xs font-bold uppercase tracking-wider text-slate-600">
+                    Kelas <span class="text-rose-500">*</span>
+                  </label>
+                  <div class="relative">
+                    <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-slate-400">
+                      <i class="fa-solid fa-school"></i>
+                    </span>
+                    <select 
+                      id="select-student-class" 
+                      class="w-full pl-10 pr-8 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm text-slate-800 font-medium transition bg-white appearance-none cursor-pointer"
+                    >
+                      <option value="" disabled selected>-- Pilih Kelas Anda --</option>
+                      <option value="12 IPA 1">12 IPA 1</option>
+                      <option value="12 IPA 2">12 IPA 2</option>
+                      <option value="12 IPS 1">12 IPS 1</option>
+                    </select>
+                    <span class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-slate-400">
+                      <i class="fa-solid fa-chevron-down text-xs"></i>
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <div id="student-form-error" class="hidden p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs flex items-center space-x-2">
+                <i class="fa-solid fa-circle-exclamation flex-shrink-0"></i>
+                <span id="student-form-error-text">Harap isi nama lengkap dan pilih kelas terlebih dahulu.</span>
+              </div>
+            </div>
+
+            <!-- Pre-test summary badge & Launch button -->
+            <div class="flex flex-col sm:flex-row items-center justify-between gap-4 pt-2">
+              <div class="flex items-center space-x-4 text-xs sm:text-sm text-slate-500">
+                <span class="flex items-center"><i class="fa-regular fa-circle-question text-blue-500 mr-1.5"></i> 10 Soal</span>
+                <span class="flex items-center"><i class="fa-solid fa-stopwatch text-blue-500 mr-1.5"></i> Timer 15 Menit</span>
+                <span class="flex items-center"><i class="fa-solid fa-award text-blue-500 mr-1.5"></i> Skala 100 Poin</span>
+              </div>
+
+              <button onclick="startQuiz()" class="w-full sm:w-auto px-8 py-3.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-2xl shadow-lg shadow-blue-500/30 transition duration-200 transform hover:-translate-y-0.5 flex items-center justify-center space-x-2 text-base">
+                <span>Mulai Latihan Sekarang</span>
+                <i class="fa-solid fa-arrow-right text-sm"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ========================================================================= -->
+      <!-- SECTION 2: EXAM WORKSPACE (SOAL LATIHAN) -->
+      <!-- ========================================================================= -->
+      <div id="view-quiz" class="hidden space-y-5">
+        
+        <!-- Top Navigation Number Grid -->
+        <div class="bg-white rounded-2xl shadow-xs border border-slate-200 p-4">
+          <div class="flex items-center justify-between mb-3">
+            <span class="text-xs font-bold uppercase tracking-wider text-slate-500 flex items-center">
+              <i class="fa-solid fa-cubes-stacked mr-1.5 text-blue-600"></i> Navigasi Soal (1 - 10)
+            </span>
+            <div class="flex items-center space-x-2">
+              <span id="answered-counter-badge" class="text-xs font-semibold px-2.5 py-0.5 bg-slate-100 text-slate-700 rounded-full">
+                0 / 10 Terjawab
+              </span>
+              <span id="autosave-indicator" class="text-xs font-medium text-emerald-600 flex items-center hidden sm:flex">
+                <i class="fa-solid fa-cloud-arrow-up mr-1 text-emerald-500"></i> Tersimpan
+              </span>
+            </div>
+          </div>
+          <div id="question-nav-container" class="grid grid-cols-5 sm:grid-cols-10 gap-2">
+            <!-- Populated via JS -->
+          </div>
+        </div>
+
+        <!-- Question Card Box -->
+        <div class="bg-white rounded-3xl shadow-sm border border-slate-200 p-6 sm:p-8 space-y-6">
+          <div class="flex items-center justify-between border-b border-slate-100 pb-4">
+            <div class="flex items-center space-x-2">
+              <span id="question-number-pill" class="px-3 py-1 bg-blue-100 text-blue-700 font-bold text-sm rounded-xl">
+                Soal No. 1
+              </span>
+              <span id="question-topic-pill" class="text-xs font-medium bg-slate-100 text-slate-600 px-2.5 py-1 rounded-xl hidden sm:inline-block">
+                Topik: Trigonometri
+              </span>
+            </div>
+
+            <div id="question-feedback-status" class="text-xs font-semibold">
+              <!-- Will indicate status -->
+            </div>
+          </div>
+
+          <!-- Problem Statement Area -->
+          <div id="question-text-container" class="text-slate-800 text-base sm:text-lg leading-relaxed space-y-3"></div>
+
+          <!-- Interactive Choices Area -->
+          <div id="question-options-container" class="space-y-3 pt-2"></div>
+
+          <!-- Single-click Policy Notice Banner -->
+          <div id="lock-notice-box" class="hidden p-3.5 rounded-2xl bg-amber-50 border border-amber-200 text-amber-800 text-xs sm:text-sm flex items-start space-x-2.5">
+            <i class="fa-solid fa-lock text-amber-600 mt-0.5"></i>
+            <div>
+              <span class="font-semibold">Jawaban telah terkunci:</span> Sesuai aturan latihan, opsi hanya dapat diklik 1 kali. Pembahasan lengkap dapat diakses setelah 27 September 2026.
+            </div>
+          </div>
+
+          <!-- Bottom Navigation Controls -->
+          <div class="flex items-center justify-between pt-4 border-t border-slate-100">
+            <button id="btn-prev" onclick="goToQuestion(currentQuestionIndex - 1)" class="px-5 py-2.5 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 font-semibold text-sm flex items-center space-x-2 transition disabled:opacity-40 disabled:pointer-events-none">
+              <i class="fa-solid fa-chevron-left text-xs"></i>
+              <span>Sebelumnya</span>
+            </button>
+
+            <button onclick="promptFinishQuiz()" class="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-sm shadow-sm transition flex items-center space-x-1.5">
+              <i class="fa-solid fa-check-double"></i>
+              <span>Selesai & Kumpulkan</span>
+            </button>
+
+            <button id="btn-next" onclick="goToQuestion(currentQuestionIndex + 1)" class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl text-sm flex items-center space-x-2 transition disabled:opacity-40 disabled:pointer-events-none">
+              <span>Selanjutnya</span>
+              <i class="fa-solid fa-chevron-right text-xs"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ========================================================================= -->
+      <!-- SECTION 3: CLOSING PAGE (SKOR & ANALISIS DETAIL) -->
+      <!-- ========================================================================= -->
+      <div id="view-result" class="hidden space-y-6">
+        
+        <!-- Submission Status Banner to Google Sheet -->
+        <div id="gsheet-sync-status" class="p-4 rounded-2xl bg-blue-50 border border-blue-200 text-blue-800 text-xs sm:text-sm flex items-center justify-between">
+          <div class="flex items-center space-x-2.5">
+            <i id="gsheet-sync-icon" class="fa-solid fa-circle-notch fa-spin text-blue-600"></i>
+            <span id="gsheet-sync-text">Menyinkronkan hasil latihan ke Spreadsheet TKA MAT4...</span>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-3xl shadow-sm border border-slate-200 p-6 sm:p-10 space-y-8">
+          
+          <!-- Result Header -->
+          <div class="text-center space-y-2 border-b border-slate-100 pb-6">
+            <div class="w-16 h-16 rounded-3xl bg-blue-50 text-blue-600 flex items-center justify-center mx-auto text-2xl mb-3 shadow-inner">
+              <i class="fa-solid fa-chart-pie"></i>
+            </div>
+            <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+              Laporan Hasil Latihan TKA 2026
+            </h2>
+            <p class="text-slate-500 text-sm sm:text-base">
+              Kerja bagus Brainies! Latihan Anda telah selesai dikerjakan dan tersimpan.
+            </p>
+
+            <!-- Student Identity Confirmation Badge -->
+            <div class="pt-3 flex flex-wrap items-center justify-center gap-2">
+              <div class="inline-flex items-center px-3 py-1 rounded-xl bg-slate-100 text-slate-700 text-xs font-semibold">
+                <i class="fa-regular fa-user mr-1.5 text-blue-600"></i>
+                <span>Nama Siswa:&nbsp;</span>
+                <span id="result-student-name" class="font-bold text-slate-900">-</span>
+              </div>
+              <div class="inline-flex items-center px-3 py-1 rounded-xl bg-blue-50 text-blue-800 text-xs font-semibold border border-blue-200">
+                <i class="fa-solid fa-graduation-cap mr-1.5 text-blue-600"></i>
+                <span>Kelas:&nbsp;</span>
+                <span id="result-student-class" class="font-bold text-blue-900">-</span>
+              </div>
+              <div class="inline-flex items-center px-3 py-1 rounded-xl bg-emerald-50 text-emerald-800 text-xs font-semibold border border-emerald-200">
+                <i class="fa-solid fa-clock-rotate-left mr-1.5 text-emerald-600"></i>
+                <span>Sisa Waktu:&nbsp;</span>
+                <span id="result-student-timer" class="font-bold text-emerald-900">00:00</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Score Metrics Cards -->
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div class="bg-gradient-to-br from-blue-600 to-indigo-700 text-white rounded-2xl p-5 text-center shadow-md shadow-blue-500/20">
+              <span class="text-xs uppercase tracking-wider text-blue-100 font-semibold block">Skor Akhir</span>
+              <div class="flex items-baseline justify-center space-x-1 my-1">
+                <span id="score-display" class="text-4xl sm:text-5xl font-extrabold tracking-tight">0</span>
+                <span class="text-blue-200 font-bold text-lg">/ 100</span>
+              </div>
+              <span id="score-status-badge" class="text-xs bg-white/20 text-white px-2.5 py-0.5 rounded-full inline-block font-medium">
+                Kategori Nilai
+              </span>
+            </div>
+
+            <div class="bg-emerald-50 border border-emerald-200 rounded-2xl p-5 text-center">
+              <span class="text-xs uppercase tracking-wider text-emerald-700 font-bold block">Jawaban Benar</span>
+              <div class="flex items-center justify-center space-x-2 my-1 text-emerald-600">
+                <i class="fa-solid fa-circle-check text-2xl"></i>
+                <span id="correct-count-display" class="text-3xl sm:text-4xl font-extrabold">0</span>
+                <span class="text-slate-400 font-medium text-lg">/ 10</span>
+              </div>
+              <span class="text-xs text-emerald-600 font-medium">Poin Terpenuhi</span>
+            </div>
+
+            <div class="bg-rose-50 border border-rose-200 rounded-2xl p-5 text-center">
+              <span class="text-xs uppercase tracking-wider text-rose-700 font-bold block">Jawaban Salah</span>
+              <div class="flex items-center justify-center space-x-2 my-1 text-rose-600">
+                <i class="fa-solid fa-circle-xmark text-2xl"></i>
+                <span id="incorrect-count-display" class="text-3xl sm:text-4xl font-extrabold">0</span>
+                <span class="text-slate-400 font-medium text-lg">/ 10</span>
+              </div>
+              <span class="text-xs text-rose-600 font-medium">Perlu Konsultasi</span>
+            </div>
+          </div>
+
+          <!-- Detailed Diagnostic Topic Breakdown -->
+          <div class="space-y-4">
+            <div class="flex items-center justify-between">
+              <h3 class="text-lg font-bold text-slate-900 flex items-center">
+                <i class="fa-solid fa-bullseye text-blue-600 mr-2"></i>
+                Analisis Pemetaan Materi & Rekomendasi Konsultasi Pengajar
+              </h3>
+            </div>
+            <p class="text-xs sm:text-sm text-slate-600">
+              Analisis ini memetakan kelemahan materi secara spesifik agar Brainies tahu persis bagian mana yang perlu ditanyakan atau dikonsultasikan saat bimbingan belajar dengan Master Teacher BAC Bogor Permata.
+            </p>
+
+            <div id="diagnostic-breakdown-container" class="space-y-3"></div>
+          </div>
+
+          <!-- Schedule & Discussion Availability Information -->
+          <div class="p-4 rounded-2xl bg-blue-50 border border-blue-200 text-blue-900 text-sm flex items-start space-x-3">
+            <i class="fa-solid fa-circle-info text-blue-600 text-lg mt-0.5"></i>
+            <div>
+              <p class="font-semibold">Informasi Pembahasan Lengkap:</p>
+              <p class="text-xs sm:text-sm text-blue-800/90 mt-0.5">
+                Sesuai ketentuan latihan 1 kali pengerjaan, kunci jawaban dan pembahasan rinci akan dibuka otomatis di portal belajar setelah periode latihan berakhir pada tanggal <strong>28 September 2026</strong>.
+              </p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Confirmation and Alert Modal -->
+  <div id="confirm-modal" class="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-xs hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl space-y-4 border border-slate-100 transform transition-all">
+      <div id="modal-icon-container" class="w-12 h-12 rounded-2xl bg-amber-100 text-amber-600 flex items-center justify-center text-xl">
+        <i class="fa-solid fa-triangle-exclamation"></i>
+      </div>
+      <div>
+        <h4 id="modal-title" class="text-lg font-bold text-slate-900">Konfirmasi Pengumpulan</h4>
+        <p id="modal-desc" class="text-sm text-slate-600 mt-1 leading-relaxed">
+          Apakah kamu yakin ingin menyelesaikan latihan sekarang?
+        </p>
+      </div>
+      <div id="modal-action-row" class="flex items-center justify-end space-x-3 pt-2">
+        <button id="modal-cancel-btn" onclick="closeModal()" class="px-4 py-2 rounded-xl border border-slate-200 text-slate-700 hover:bg-slate-50 font-semibold text-sm">
+          Batal
+        </button>
+        <button id="modal-confirm-btn" class="px-5 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm shadow-md">
+          Ya, Selesaikan
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer Bar -->
+  <footer class="bg-white border-t border-slate-200 py-4 px-4 sm:px-6">
+    <div class="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2 text-slate-500">
+      <!-- Mandatory Left Footer Statement (strictly 9pt font) -->
+      <div style="font-size: 9pt;" class="text-slate-600 font-normal text-center sm:text-left">
+        Copyright © 2026 Brain Academy Bogor Permata. All rights reserved.
+      </div>
+      <div style="font-size: 9pt;" class="text-slate-400 text-center sm:text-right">
+        Persiapan Tes Kemampuan Akademik (TKA) 2026 &bull; Matematika
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    /**
+     * PENGATURAN INTEGRASI GOOGLE APPS SCRIPT
+     * Salin URL Web App dari deployment Google Apps Script Anda ke variabel di bawah ini:
+     */
+    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbynZrhhAbXTuIodCCxBOs0uOFU4zIkBupsYT3o8uhAYSxfQbi28c0zn3CuzYocT0-z30A/exec";
+
+    /**
+     * PENGATURAN PERIODE LATIHAN (DEADLINE)
+     * Hanya diedit melalui kode ini (tidak ditampilkan konfigurasi di UI)
+     */
+    const EXAM_SCHEDULE = {
+      enabled: true, // Ubah ke false jika ingin menonaktifkan pengecekan batas waktu untuk simulasi
+      startDate: '2026-09-21T00:00:00+07:00', // Dibuka: 21 September 2026 pukul 00:00 WIB
+      endDate: '2026-09-27T23:59:59+07:00'    // Ditutup: 27 September 2026 pukul 23:59 WIB
+    };
+
+    /**
+     * Database 10 Soal Matematika TKA - Trigonometri
+     * Diambil langsung dari dokumen PDF resmi Brain Academy Bogor Permata
+     */
+    const QUIZ_QUESTIONS = [
+      {
+        id: 1,
+        type: 'mcq',
+        category: 'Perbandingan Trigonometri Segitiga Siku-siku',
+        subtopicName: 'Perbandingan Trigonometri Segitiga Siku-siku',
+        competencyId: 'comp_tri',
+        text: `Perhatikan segitiga siku-siku $ABC$ yang siku-siku di titik $B$. Diketahui panjang sisi alas $AB = 20\\text{ cm}$ dan panjang sisi tegak $BC = 15\\text{ cm}$. Nilai dari ekspresi trigonometri:
+        $$\\frac{\\sec A + \\tan A}{\\csc C}$$
+        adalah ...`,
+        options: [
+          { key: 'A', text: '1,2' },
+          { key: 'B', text: '1,4' },
+          { key: 'C', text: '1,6' },
+          { key: 'D', text: '1,8' },
+          { key: 'E', text: '2,0' }
+        ],
+        correctAnswer: 'C',
+        consultationAdvice: 'Perkuat pemahaman mengenai definisi perbandingan trigonometri dasar (sisi depan, samping, miring) dan teorema Pythagoras pada segitiga siku-siku.'
+      },
+      {
+        id: 2,
+        type: 'matrix',
+        category: 'Sudut Istimewa & Identitas Dasar Trigonometri',
+        subtopicName: 'Sudut Istimewa & Identitas Dasar',
+        competencyId: 'comp_identitas',
+        text: `Tentukan kebenaran dari setiap pernyataan mengenai nilai perbandingan trigonometri dan identitas dasar berikut dengan memilih <strong>Benar</strong> atau <strong>Salah</strong> pada masing-masing pernyataan:`,
+        statements: [
+          {
+            id: 's1',
+            text: 'Nilai dari perbandingan $\\frac{\\sin 60^{\\circ} \\cdot \\tan 30^{\\circ}}{\\cos 45^{\\circ}}$ ekuivalen dengan $\\frac{\\sqrt{2}}{2}$.',
+            correct: 'Benar'
+          },
+          {
+            id: 's2',
+            text: 'Untuk setiap sudut lancip $\\alpha$, berlaku identitas $\\tan \\alpha \\cdot \\cot \\alpha + \\sin^{2}\\alpha + \\cos^{2}\\alpha = 2$.',
+            correct: 'Benar'
+          },
+          {
+            id: 's3',
+            text: 'Jika $\\cos \\beta = \\frac{1}{2}$ dengan $\\beta$ sudut lancip, maka nilai dari $\\sec^{2}\\beta - \\tan^{2}\\beta = 3$.',
+            correct: 'Salah'
+          }
+        ],
+        consultationAdvice: 'Perdalam hafalan nilai eksak sudut istimewa ($30^\\circ, 45^\\circ, 60^\\circ$) serta identitas Pythagoras dasar $\\sec^2\\beta - \\tan^2\\beta = 1$.'
+      },
+      {
+        id: 3,
+        type: 'mcq',
+        category: 'Koordinat Cartesius & Perbandingan Kuadran II',
+        subtopicName: 'Koordinat Cartesius & Kuadran Sudut',
+        competencyId: 'comp_kuadran',
+        text: `Sebuah titik $P(-7, 24)$ terletak pada bidang koordinat Cartesius. Ruas garis yang menghubungkan titik asal $O(0,0)$ ke titik $P$ membentuk sudut $\\alpha$ terhadap sumbu-X positif dalam posisi standar $(0^{\\circ} \\le \\alpha < 360^{\\circ})$. Nilai dari ekspresi:
+        $$\\frac{\\cos \\alpha}{1 + \\sin \\alpha}$$
+        adalah ...`,
+        options: [
+          { key: 'A', text: '$-\\frac{7}{25}$' },
+          { key: 'B', text: '$-\\frac{1}{7}$' },
+          { key: 'C', text: '$\\frac{1}{7}$' },
+          { key: 'D', text: '$-\\frac{24}{25}$' },
+          { key: 'E', text: '$-\\frac{7}{24}$' }
+        ],
+        correctAnswer: 'B',
+        consultationAdvice: 'Konsultasikan aturan tanda aljabar trigonometri pada koordinat Cartesius $P(x, y)$ di Kuadran II di mana absis $x < 0$ dan ordinat $y > 0$.'
+      },
+      {
+        id: 4,
+        type: 'mcq',
+        category: 'Tanda & Rasio Trigonometri di Kuadran IV',
+        subtopicName: 'Koordinat Cartesius & Kuadran Sudut',
+        competencyId: 'comp_kuadran',
+        text: `Diketahui sudut $\\theta$ berada pada Kuadran IV $(270^{\\circ} < \\theta < 360^{\\circ})$ dengan nilai perbandingan kosinus $\\cos \\theta = \\frac{5}{13}$.
+        <br><br>
+        Perhatikan pernyataan-pernyataan berikut:<br>
+        (1) Nilai dari perbandingan sinus $\\sin \\theta = -\\frac{12}{13}$<br>
+        (2) Nilai dari perbandingan tangen $\\tan \\theta = -\\frac{12}{5}$<br>
+        (3) Nilai dari penjumlahan rasio $\\sec \\theta + \\tan \\theta = \\frac{1}{5}$<br>
+        (4) Nilai dari penjumlahan rasio $\\csc \\theta + \\cot \\theta = \\frac{3}{2}$<br><br>
+        Pernyataan yang <strong>BENAR</strong> adalah ...`,
+        options: [
+          { key: 'A', text: '(1), (2), dan (3) saja' },
+          { key: 'B', text: '(1) dan (3) saja' },
+          { key: 'C', text: '(2) dan (4) saja' },
+          { key: 'D', text: '(4) saja' },
+          { key: 'E', text: 'Semua pernyataan benar' }
+        ],
+        correctAnswer: 'A',
+        consultationAdvice: 'Perhatikan tanda trigonometri di Kuadran IV (hanya kosinus dan sekan yang bernilai positif, sedangkan sinus, tangen, dan kotangen bernilai negatif).'
+      },
+      {
+        id: 5,
+        type: 'mcq',
+        category: 'Manipulasi Aljabar Identitas Trigonometri',
+        subtopicName: 'Sudut Istimewa & Identitas Dasar',
+        competencyId: 'comp_identitas',
+        text: `Diketahui suatu sudut lancip $x\\ (0^{\\circ} < x < 90^{\\circ})$ memenuhi hubungan persamaan:
+        $$\\tan x + \\cot x = \\frac{25}{12}$$
+        Nilai dari ekspresi $(\\sin x - \\cos x)^{2}$ adalah ...`,
+        options: [
+          { key: 'A', text: '$\\frac{1}{25}$' },
+          { key: 'B', text: '$\\frac{4}{25}$' },
+          { key: 'C', text: '$\\frac{7}{25}$' },
+          { key: 'D', text: '$\\frac{9}{25}$' },
+          { key: 'E', text: '$\\frac{12}{25}$' }
+        ],
+        correctAnswer: 'A',
+        consultationAdvice: 'Latih kemampuan mengubah $\\tan x + \\cot x$ menjadi bentuk dasar $\\frac{1}{\\sin x \\cos x}$ serta penjabaran kuadrat $(\\sin x - \\cos x)^2$.'
+      },
+      {
+        id: 6,
+        type: 'mcq',
+        category: 'Aplikasi Kontekstual Klinometer & Sudut Elevasi',
+        subtopicName: 'Aplikasi Kontekstual Sudut Elevasi',
+        competencyId: 'comp_elevasi',
+        text: `Seorang insinyur geodesi mengamati puncak menara pemancar komunikasi BTS dari titik pengamatan $A$ pada permukaan tanah datar dengan sudut elevasi $45^{\\circ}$. Insinyur tersebut kemudian bergerak lurus menjauhi menara sejauh $40\\text{ meter}$ menuju titik pengamatan $B$ yang segaris dengan titik $A$ dan dasar menara. Dari titik $B$, sudut elevasi puncak menara terukur sebesar $30^{\\circ}$. Tinggi menara pemancar komunikasi BTS tersebut adalah ...`,
+        options: [
+          { key: 'A', text: '$15(\\sqrt{3} + 1)\\text{ m}$' },
+          { key: 'B', text: '$20(\\sqrt{3} - 1)\\text{ m}$' },
+          { key: 'C', text: '$30\\sqrt{3}\\text{ m}$' },
+          { key: 'D', text: '$20(\\sqrt{3} + 1)\\text{ m}$' },
+          { key: 'E', text: '$40(\\sqrt{3} - 1)\\text{ m}$' }
+        ],
+        correctAnswer: 'D',
+        consultationAdvice: 'Diskusikan pemodelan sistem persamaan tangen pada dua sudut elevasi dan teknik merasionalkan penyebut pecahan aljabar bentuk akar.'
+      },
+      {
+        id: 7,
+        type: 'matrix',
+        category: 'Rasio Trigonometri & Manipulasi Pecahan Sudut Lancip',
+        subtopicName: 'Persamaan Linear & Manipulasi Rasional',
+        competencyId: 'comp_aljabar',
+        text: `Diketahui sudut lancip $\\alpha$ memenuhi perbandingan nilai $\\tan \\alpha = \\frac{1}{\\sqrt{5}}$. Tentukan kebenaran dari setiap pernyataan mengenai nilai perbandingan trigonometri sudut $\\alpha$ berikut dengan memilih <strong>Benar</strong> atau <strong>Salah</strong>:`,
+        statements: [
+          {
+            id: 's1',
+            text: 'Nilai dari perkalian $\\sin \\alpha \\cdot \\cos \\alpha$ adalah $\\frac{\\sqrt{5}}{6}$.',
+            correct: 'Benar'
+          },
+          {
+            id: 's2',
+            text: 'Nilai dari bentuk rasio $\\frac{\\csc^{2}\\alpha - \\sec^{2}\\alpha}{\\csc^{2}\\alpha + \\sec^{2}\\alpha}$ adalah $\\frac{2}{3}$.',
+            correct: 'Benar'
+          },
+          {
+            id: 's3',
+            text: 'Nilai dari bentuk ekspresi $\\frac{\\cos^{2}\\alpha}{\\sec^{2}\\alpha}$ adalah $\\frac{5}{6}$.',
+            correct: 'Salah'
+          }
+        ],
+        consultationAdvice: 'Pelajari kembali penyederhanaan aljabar bentuk pecahan bertingkat pada fungsi kebalikan trigonometri ($\\sec \\alpha$ dan $\\csc \\alpha$).'
+      },
+      {
+        id: 8,
+        type: 'mcq',
+        category: 'Geometri Segitiga Siku-siku & Selisih Sudut',
+        subtopicName: 'Perbandingan Trigonometri Segitiga Siku-siku',
+        competencyId: 'comp_tri',
+        text: `Perhatikan segitiga siku-siku $PQR$ yang siku-siku di titik $Q$. Diketahui panjang sisi siku-siku $PQ = 6\\text{ cm}$ dan $QR = 9\\text{ cm}$. Titik $D$ terletak pada sisi $QR$ sedemikian rupa sehingga perbandingan panjang ruas garis $QD : DR = 1 : 2$. Didefinisikan sudut $\\angle QPD = \\alpha$ dan $\\angle QPR = \\beta$.
+        <br><br>
+        Perhatikan pernyataan-pernyataan berikut:<br>
+        (1) Nilai perbandingan tangen sudut $\\tan \\alpha = \\frac{1}{2}$<br>
+        (2) Panjang ruas garis $PD$ adalah $3\\sqrt{5}\\text{ cm}$<br>
+        (3) Nilai perbandingan tangen selisih sudut $\\tan(\\angle DPR) = \\frac{4}{7}$<br>
+        (4) Nilai perbandingan sinus sudut $\\sin \\beta = \\frac{3\\sqrt{13}}{13}$<br><br>
+        Pernyataan yang <strong>BENAR</strong> adalah ...`,
+        options: [
+          { key: 'A', text: '(1), (2), dan (3) saja' },
+          { key: 'B', text: '(1) dan (3) saja' },
+          { key: 'C', text: '(2) dan (4) saja' },
+          { key: 'D', text: '(4) saja' },
+          { key: 'E', text: 'Semua pernyataan benar' }
+        ],
+        correctAnswer: 'E',
+        consultationAdvice: 'Minta Master Teacher mengulas rumus tangen selisih dua sudut $\\tan(\\beta - \\alpha) = \\frac{\\tan\\beta - \\tan\\alpha}{1 + \\tan\\beta \\tan\\alpha}$.'
+      },
+      {
+        id: 9,
+        type: 'mcq',
+        category: 'Persamaan Linear Rasional Trigonometri',
+        subtopicName: 'Persamaan Linear & Manipulasi Rasional',
+        competencyId: 'comp_aljabar',
+        text: `Diketahui suatu sudut lancip $x\\ (0^{\\circ} < x < 90^{\\circ})$ memenuhi persamaan linear rasional trigonometri sebagai berikut:
+        $$\\frac{3\\sin x + 2\\cos x}{5\\cos x - \\sin x} = 2$$
+        Nilai dari perkalian $\\sin x \\cdot \\cos x$ adalah ...`,
+        options: [
+          { key: 'A', text: '$\\frac{20}{89}$' },
+          { key: 'B', text: '$\\frac{35}{89}$' },
+          { key: 'C', text: '$\\frac{40}{89}$' },
+          { key: 'D', text: '$\\frac{45}{89}$' },
+          { key: 'E', text: '$\\frac{80}{89}$' }
+        ],
+        correctAnswer: 'C',
+        consultationAdvice: 'Fokuskan latihan pada perkalian silang aljabar untuk memperoleh rasio $\\tan x = \\frac{8}{5}$, kemudian tentukan sisi miring menggunakan Pythagoras.'
+      },
+      {
+        id: 10,
+        type: 'mcq',
+        category: 'Aplikasi Elevasi Bertingkat (Gedung & Tiang)',
+        subtopicName: 'Aplikasi Kontekstual Sudut Elevasi',
+        competencyId: 'comp_elevasi',
+        text: `Sebuah tiang pemancar sinyal mikro dipasang tegak lurus tepat di atas atap sebuah gedung perkantoran setinggi $45\\text{ meter}$. Seorang teknisi pemeliharaan yang berdiri di permukaan tanah datar mengamati dasar tiang pemancar (puncak atap gedung) dengan sudut elevasi $45^{\\circ}$, dan mengamati bagian ujung atas tiang pemancar dengan sudut elevasi $60^{\\circ}$. Tinggi tiang pemancar sinyal mikro tersebut adalah ...`,
+        options: [
+          { key: 'A', text: '$15(\\sqrt{3} - 1)\\text{ m}$' },
+          { key: 'B', text: '$30(\\sqrt{3} - 1)\\text{ m}$' },
+          { key: 'C', text: '$45\\text{ m}$' },
+          { key: 'D', text: '$45(\\sqrt{3} + 1)\\text{ m}$' },
+          { key: 'E', text: '$45(\\sqrt{3} - 1)\\text{ m}$' }
+        ],
+        correctAnswer: 'E',
+        consultationAdvice: 'Diskusikan diagram sketsa geometris untuk memisahkan pengamatan jarak dasar gedung terhadap sudut elevasi puncak tiang bertingkat.'
+      }
+    ];
+
+    const IDB_CONFIG = {
+      dbName: 'BAC_TKA_2026_DATABASE',
+      storeName: 'exam_progress',
+      version: 1
+    };
+
+    function openDatabase() {
+      return new Promise((resolve, reject) => {
+        if (!window.indexedDB) {
+          resolve(null);
+          return;
+        }
+        const request = indexedDB.open(IDB_CONFIG.dbName, IDB_CONFIG.version);
+        request.onupgradeneeded = (e) => {
+          const db = e.target.result;
+          if (!db.objectStoreNames.contains(IDB_CONFIG.storeName)) {
+            db.createObjectStore(IDB_CONFIG.storeName, { keyPath: 'key' });
+          }
+        };
+        request.onsuccess = () => resolve(request.result);
+        request.onerror = () => resolve(null);
+      });
+    }
+
+    async function dbSave(key, value) {
+      try {
+        const db = await openDatabase();
+        if (!db) return;
+        const tx = db.transaction(IDB_CONFIG.storeName, 'readwrite');
+        const store = tx.objectStore(IDB_CONFIG.storeName);
+        store.put({ key, value, updatedAt: Date.now() });
+      } catch (err) {
+        console.warn('Autosave write error:', err);
+      }
+    }
+
+    async function dbGet(key) {
+      try {
+        const db = await openDatabase();
+        if (!db) return null;
+        return new Promise((resolve) => {
+          const tx = db.transaction(IDB_CONFIG.storeName, 'readonly');
+          const store = tx.objectStore(IDB_CONFIG.storeName);
+          const request = store.get(key);
+          request.onsuccess = () => resolve(request.result ? request.result.value : null);
+          request.onerror = () => resolve(null);
+        });
+      } catch (err) {
+        return null;
+      }
+    }
+
+    async function dbClear(key) {
+      try {
+        const db = await openDatabase();
+        if (!db) return;
+        const tx = db.transaction(IDB_CONFIG.storeName, 'readwrite');
+        tx.objectStore(IDB_CONFIG.storeName).delete(key);
+      } catch (e) {}
+    }
+
+    let currentQuestionIndex = 0;
+    let userAnswers = {};
+    let studentInfo = { name: '', class: '' };
+    let timeRemaining = 15 * 60; // 15 menit (900 detik)
+    let timerInterval = null;
+    let examSubmitted = false;
+
+    function formatTime(totalSeconds) {
+      const minutes = Math.floor(totalSeconds / 60);
+      const seconds = totalSeconds % 60;
+      return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+    }
+
+    function startTimer() {
+      if (timerInterval) clearInterval(timerInterval);
+      const timerWrapper = document.getElementById('exam-timer-wrapper');
+      const timerDisplay = document.getElementById('timer-display');
+      timerWrapper.classList.remove('hidden');
+      timerWrapper.classList.add('flex');
+
+      timerInterval = setInterval(() => {
+        if (timeRemaining > 0) {
+          timeRemaining--;
+          timerDisplay.textContent = formatTime(timeRemaining);
+
+          // Peringatan visual saat waktu tersisa kurang dari 2 menit
+          if (timeRemaining <= 120) {
+            timerWrapper.className = 'flex items-center px-3 py-1.5 rounded-xl bg-rose-100 border border-rose-300 text-rose-700 font-mono font-bold text-xs sm:text-sm animate-pulse';
+          }
+
+          // Simpan sisa waktu secara otomatis
+          persistExamSession();
+        } else {
+          // Waktu 15 menit habis
+          clearInterval(timerInterval);
+          handleTimeExpired();
+        }
+      }, 1000);
+    }
+
+    function handleTimeExpired() {
+      if (examSubmitted) return;
+      
+      const modal = document.getElementById('confirm-modal');
+      const title = document.getElementById('modal-title');
+      const desc = document.getElementById('modal-desc');
+      const actionRow = document.getElementById('modal-action-row');
+
+      title.textContent = 'Waktu Pengerjaan Habis!';
+      desc.textContent = 'Waktu 15 menit latihan mandiri telah berakhir. Lembar jawaban kamu sedang dikumpulkan secara otomatis ke server...';
+      actionRow.innerHTML = `
+        <button onclick="finalizeQuizResults(true)" class="px-5 py-2.5 rounded-xl bg-blue-600 text-white font-bold text-sm shadow-md">
+          Lihat Skor Akhir
+        </button>
+      `;
+      modal.classList.remove('hidden');
+
+      setTimeout(() => {
+        closeModal();
+        finalizeQuizResults(true);
+      }, 2000);
+    }
+
+    function checkDeadlineSchedule() {
+      if (!EXAM_SCHEDULE.enabled) return true;
+
+      const now = new Date();
+      const start = new Date(EXAM_SCHEDULE.startDate);
+      const end = new Date(EXAM_SCHEDULE.endDate);
+
+      const lockedView = document.getElementById('view-schedule-locked');
+      const welcomeView = document.getElementById('view-welcome');
+      const lockedTitle = document.getElementById('schedule-locked-title');
+      const lockedDesc = document.getElementById('schedule-locked-desc');
+
+      if (now < start) {
+        welcomeView.classList.add('hidden');
+        lockedView.classList.remove('hidden');
+        lockedTitle.textContent = 'Latihan Belum Dibuka';
+        lockedDesc.innerHTML = `Sesuai ketentuan, latihan TKA 2026 Matematika - Trigonometri baru dapat dikerjakan mulai tanggal <strong>21 September 2026</strong>.`;
+        return false;
+      }
+
+      if (now > end) {
+        welcomeView.classList.add('hidden');
+        lockedView.classList.remove('hidden');
+        lockedTitle.textContent = 'Periode Latihan Telah Berakhir';
+        lockedDesc.innerHTML = `Periode latihan mingguan telah resmi ditutup pada <strong>27 September 2026</strong>. Pembahasan lengkap soal kini dapat diakses di portal siswa.`;
+        return false;
+      }
+
+      return true;
+    }
+
+    async function checkExistingCompletedExam() {
+      // Periksa apakah siswa sudah pernah mengerjakan hingga selesai (1 kali pengerjaan)
+      const completedRecord = await dbGet('tka_completed_exam');
+      if (completedRecord && completedRecord.isFinished) {
+        renderCompletedResultsView(completedRecord);
+        return true;
+      }
+      return false;
+    }
+
+    async function checkSavedDraftSession() {
+      const draft = await dbGet('tka_active_draft');
+      if (draft && !draft.isFinished && draft.studentName) {
+        document.getElementById('autosave-restore-banner').classList.remove('hidden');
+      }
+    }
+
+    async function resumeSavedSession() {
+      const draft = await dbGet('tka_active_draft');
+      if (!draft) return;
+
+      studentInfo = { name: draft.studentName, class: draft.studentClass };
+      userAnswers = draft.userAnswers || {};
+      timeRemaining = draft.timeRemaining !== undefined ? draft.timeRemaining : 15 * 60;
+      currentQuestionIndex = draft.currentQuestionIndex || 0;
+
+      document.getElementById('input-student-name').value = studentInfo.name;
+      document.getElementById('select-student-class').value = studentInfo.class;
+
+      document.getElementById('view-welcome').classList.add('hidden');
+      document.getElementById('view-result').classList.add('hidden');
+      document.getElementById('view-quiz').classList.remove('hidden');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+
+      startTimer();
+      renderNavButtons();
+      renderQuestion(currentQuestionIndex);
+    }
+
+    async function persistExamSession() {
+      if (examSubmitted) return;
+      const draftData = {
+        isFinished: false,
+        studentName: studentInfo.name,
+        studentClass: studentInfo.class,
+        userAnswers: userAnswers,
+        timeRemaining: timeRemaining,
+        currentQuestionIndex: currentQuestionIndex
+      };
+      await dbSave('tka_active_draft', draftData);
+      
+      const autosaveTag = document.getElementById('autosave-indicator');
+      if (autosaveTag) {
+        autosaveTag.classList.remove('opacity-0');
+        autosaveTag.classList.add('opacity-100');
+      }
+    }
+
+    function startQuiz() {
+      if (!checkDeadlineSchedule()) return;
+
+      const nameInput = document.getElementById('input-student-name');
+      const classSelect = document.getElementById('select-student-class');
+      const errorBox = document.getElementById('student-form-error');
+      const errorText = document.getElementById('student-form-error-text');
+
+      const nameVal = nameInput ? nameInput.value.trim() : '';
+      const classVal = classSelect ? classSelect.value : '';
+
+      if (!nameVal) {
+        errorText.textContent = 'Harap isi Nama Lengkap Siswa terlebih dahulu.';
+        errorBox.classList.remove('hidden');
+        nameInput.focus();
+        return;
+      }
+
+      if (!classVal) {
+        errorText.textContent = 'Harap pilih Kelas Anda (12 IPA 1, 12 IPA 2, atau 12 IPS 1).';
+        errorBox.classList.remove('hidden');
+        classSelect.focus();
+        return;
+      }
+
+      errorBox.classList.add('hidden');
+      studentInfo.name = nameVal;
+      studentInfo.class = classVal;
+
+      document.getElementById('view-welcome').classList.add('hidden');
+      document.getElementById('view-result').classList.add('hidden');
+      document.getElementById('view-quiz').classList.remove('hidden');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+
+      // Mulai timer 15 menit begitu soal pertama muncul
+      startTimer();
+      persistExamSession();
+      renderNavButtons();
+      renderQuestion(0);
+    }
+
+    function renderNavButtons() {
+      const container = document.getElementById('question-nav-container');
+      container.innerHTML = '';
+
+      let answeredCount = 0;
+
+      QUIZ_QUESTIONS.forEach((q, index) => {
+        const btn = document.createElement('button');
+        btn.id = `nav-pill-${index}`;
+        btn.textContent = index + 1;
+        btn.className = `w-full py-2.5 rounded-xl font-bold text-sm transition flex items-center justify-center border `;
+
+        const ans = userAnswers[q.id];
+        const isAnswered = ans !== undefined && (q.type === 'mcq' ? true : Object.keys(ans).length === q.statements.length);
+
+        if (isAnswered) answeredCount++;
+
+        if (index === currentQuestionIndex) {
+          btn.className += 'ring-2 ring-blue-600 ring-offset-2 border-blue-500 ';
+        }
+
+        if (isAnswered) {
+          let isCorrect = false;
+          if (q.type === 'mcq') {
+            isCorrect = (ans === q.correctAnswer);
+          } else {
+            isCorrect = q.statements.every(s => ans[s.id] === s.correct);
+          }
+
+          if (isCorrect) {
+            btn.className += 'bg-emerald-600 text-white border-emerald-600';
+          } else {
+            btn.className += 'bg-rose-600 text-white border-rose-600';
+          }
+        } else {
+          btn.className += 'bg-white text-slate-700 border-slate-200 hover:border-blue-400 hover:bg-slate-50';
+        }
+
+        btn.onclick = () => goToQuestion(index);
+        container.appendChild(btn);
+      });
+
+      document.getElementById('answered-counter-badge').textContent = `${answeredCount} / 10 Terjawab`;
+    }
+
+    function renderQuestion(index) {
+      currentQuestionIndex = index;
+      persistExamSession();
+
+      const q = QUIZ_QUESTIONS[index];
+      document.getElementById('question-number-pill').textContent = `Soal No. ${q.id} dari 10`;
+      document.getElementById('question-topic-pill').textContent = `Topik: ${q.category}`;
+      document.getElementById('question-text-container').innerHTML = `<p>${q.text}</p>`;
+
+      const optionsContainer = document.getElementById('question-options-container');
+      optionsContainer.innerHTML = '';
+
+      const lockNotice = document.getElementById('lock-notice-box');
+      const statusBadge = document.getElementById('question-feedback-status');
+      
+      const currentAns = userAnswers[q.id];
+      const isLocked = currentAns !== undefined && (q.type === 'mcq' ? true : Object.keys(currentAns).length === q.statements.length);
+
+      if (isLocked) {
+        lockNotice.classList.remove('hidden');
+      } else {
+        lockNotice.classList.add('hidden');
+      }
+
+      if (q.type === 'mcq') {
+        renderMCQOptions(q, currentAns, optionsContainer, statusBadge);
+      } else if (q.type === 'matrix') {
+        renderMatrixOptions(q, currentAns, optionsContainer, statusBadge);
+      }
+
+      document.getElementById('btn-prev').disabled = (index === 0);
+      document.getElementById('btn-next').disabled = (index === QUIZ_QUESTIONS.length - 1);
+
+      renderNavButtons();
+
+      if (window.MathJax && window.MathJax.typesetPromise) {
+        window.MathJax.typesetPromise([document.getElementById('view-quiz')]).catch(err => console.error(err));
+      }
+    }
+
+    function renderMCQOptions(q, currentAns, container, statusBadge) {
+      const isAnswered = (currentAns !== undefined);
+
+      if (!isAnswered) {
+        statusBadge.innerHTML = `<span class="px-2.5 py-1 rounded-lg bg-slate-100 text-slate-500"><i class="fa-regular fa-clock mr-1"></i>Belum Dijawab</span>`;
+      } else {
+        const isCorrect = (currentAns === q.correctAnswer);
+        if (isCorrect) {
+          statusBadge.innerHTML = `<span class="px-2.5 py-1 rounded-lg bg-emerald-100 text-emerald-700"><i class="fa-solid fa-check mr-1"></i>Jawaban Anda: Benar</span>`;
+        } else {
+          statusBadge.innerHTML = `<span class="px-2.5 py-1 rounded-lg bg-rose-100 text-rose-700"><i class="fa-solid fa-xmark mr-1"></i>Jawaban Anda: Salah</span>`;
+        }
+      }
+
+      q.options.forEach(opt => {
+        const btn = document.createElement('button');
+        btn.className = `w-full text-left p-4 rounded-2xl border transition flex items-center space-x-3.5 `;
+
+        if (!isAnswered) {
+          btn.className += `bg-white border-slate-200 hover:border-blue-500 hover:bg-blue-50/40 text-slate-800 cursor-pointer shadow-xs`;
+          btn.onclick = () => handleMCQAnswer(q.id, opt.key);
+        } else {
+          btn.disabled = true;
+          btn.className += `cursor-not-allowed `;
+
+          if (opt.key === currentAns) {
+            if (currentAns === q.correctAnswer) {
+              btn.className += `bg-emerald-600 border-emerald-600 text-white font-semibold shadow-md`;
+            } else {
+              btn.className += `bg-rose-600 border-rose-600 text-white font-semibold shadow-md`;
+            }
+          } else {
+            btn.className += `bg-slate-50 border-slate-200 text-slate-400 opacity-60`;
+          }
+        }
+
+        const badge = document.createElement('span');
+        badge.className = `w-8 h-8 rounded-xl flex items-center justify-center font-bold text-sm flex-shrink-0 ${
+          isAnswered && opt.key === currentAns 
+            ? 'bg-white/20 text-white' 
+            : 'bg-slate-100 text-slate-600'
+        }`;
+        badge.textContent = opt.key;
+
+        const label = document.createElement('div');
+        label.className = 'flex-grow latex-content';
+        label.innerHTML = opt.text;
+
+        btn.appendChild(badge);
+        btn.appendChild(label);
+        container.appendChild(btn);
+      });
+    }
+
+    function renderMatrixOptions(q, currentAns, container, statusBadge) {
+      const answersMap = currentAns || {};
+      const totalStatements = q.statements.length;
+      const answeredStatements = Object.keys(answersMap).length;
+      const isFullyAnswered = (answeredStatements === totalStatements);
+
+      if (!isFullyAnswered) {
+        statusBadge.innerHTML = `<span class="px-2.5 py-1 rounded-lg bg-slate-100 text-slate-500"><i class="fa-regular fa-clock mr-1"></i>${answeredStatements}/${totalStatements} Terpilih</span>`;
+      } else {
+        const allCorrect = q.statements.every(s => answersMap[s.id] === s.correct);
+        if (allCorrect) {
+          statusBadge.innerHTML = `<span class="px-2.5 py-1 rounded-lg bg-emerald-100 text-emerald-700"><i class="fa-solid fa-check mr-1"></i>Semua Pernyataan Benar</span>`;
+        } else {
+          statusBadge.innerHTML = `<span class="px-2.5 py-1 rounded-lg bg-rose-100 text-rose-700"><i class="fa-solid fa-triangle-exclamation mr-1"></i>Ada Pernyataan yang Salah</span>`;
+        }
+      }
+
+      const tableWrapper = document.createElement('div');
+      tableWrapper.className = 'overflow-x-auto border border-slate-200 rounded-2xl';
+
+      const table = document.createElement('table');
+      table.className = 'w-full text-left border-collapse text-sm';
+      table.innerHTML = `
+        <thead>
+          <tr class="bg-slate-100/80 text-slate-700 font-bold border-b border-slate-200">
+            <th class="p-3.5 w-12 text-center">No.</th>
+            <th class="p-3.5">Pernyataan</th>
+            <th class="p-3.5 w-48 text-center">Pilihan Jawaban</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-200 bg-white"></tbody>
+      `;
+
+      const tbody = table.querySelector('tbody');
+
+      q.statements.forEach((stmt, sIdx) => {
+        const row = document.createElement('tr');
+        row.className = 'hover:bg-slate-50/50 transition';
+
+        const userPick = answersMap[stmt.id];
+        const isRowLocked = (userPick !== undefined);
+
+        const renderChoiceBtn = (val) => {
+          let classes = `px-3 py-1.5 rounded-xl font-bold text-xs transition border `;
+          let disabledAttr = '';
+          let icon = '';
+
+          if (!isRowLocked) {
+            classes += (val === 'Benar')
+              ? 'bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-600 hover:text-white cursor-pointer'
+              : 'bg-rose-50 text-rose-700 border-rose-200 hover:bg-rose-600 hover:text-white cursor-pointer';
+          } else {
+            disabledAttr = 'disabled';
+            classes += 'cursor-not-allowed ';
+            if (userPick === val) {
+              const isCorrectPick = (userPick === stmt.correct);
+              if (isCorrectPick) {
+                classes += 'bg-emerald-600 text-white border-emerald-600 shadow-xs font-extrabold';
+                icon = '<i class="fa-solid fa-check ml-1"></i>';
+              } else {
+                classes += 'bg-rose-600 text-white border-rose-600 shadow-xs font-extrabold';
+                icon = '<i class="fa-solid fa-xmark ml-1"></i>';
+              }
+            } else {
+              classes += 'bg-slate-50 text-slate-300 border-slate-200 opacity-40';
+            }
+          }
+
+          return `
+            <button ${disabledAttr} onclick="handleMatrixAnswer(${q.id}, '${stmt.id}', '${val}')" class="${classes}">
+              ${val} ${icon}
+            </button>
+          `;
+        };
+
+        row.innerHTML = `
+          <td class="p-3.5 text-center font-bold text-slate-500">${sIdx + 1}</td>
+          <td class="p-3.5 text-slate-800 latex-content">${stmt.text}</td>
+          <td class="p-3.5 text-center">
+            <div class="inline-flex items-center space-x-2">
+              ${renderChoiceBtn('Benar')}
+              ${renderChoiceBtn('Salah')}
+            </div>
+          </td>
+        `;
+
+        tbody.appendChild(row);
+      });
+
+      tableWrapper.appendChild(table);
+      container.appendChild(tableWrapper);
+    }
+
+    function handleMCQAnswer(questionId, selectedKey) {
+      if (userAnswers[questionId] !== undefined) return;
+      userAnswers[questionId] = selectedKey;
+      persistExamSession();
+      renderQuestion(currentQuestionIndex);
+    }
+
+    function handleMatrixAnswer(questionId, statementId, selectedVal) {
+      if (!userAnswers[questionId]) {
+        userAnswers[questionId] = {};
+      }
+      if (userAnswers[questionId][statementId] !== undefined) return;
+
+      userAnswers[questionId][statementId] = selectedVal;
+      persistExamSession();
+      renderQuestion(currentQuestionIndex);
+    }
+
+    function goToQuestion(index) {
+      if (index >= 0 && index < QUIZ_QUESTIONS.length) {
+        renderQuestion(index);
+        window.scrollTo({ top: 100, behavior: 'smooth' });
+      }
+    }
+
+    function promptFinishQuiz() {
+      let unansweredCount = 0;
+      QUIZ_QUESTIONS.forEach(q => {
+        const ans = userAnswers[q.id];
+        if (ans === undefined) {
+          unansweredCount++;
+        } else if (q.type === 'matrix') {
+          if (Object.keys(ans).length < q.statements.length) {
+            unansweredCount++;
+          }
+        }
+      });
+
+      const modal = document.getElementById('confirm-modal');
+      const title = document.getElementById('modal-title');
+      const desc = document.getElementById('modal-desc');
+      const confirmBtn = document.getElementById('modal-confirm-btn');
+
+      if (unansweredCount > 0) {
+        title.textContent = 'Perhatian: Ada Soal Belum Dijawab!';
+        desc.textContent = `Terdapat ${unansweredCount} butir soal yang belum dijawab. Jawaban yang kosong akan dihitung 0 poin. Tetap ingin mengumpulkan sekarang?`;
+      } else {
+        title.textContent = 'Kumpulkan Lembar Jawaban Sekarang?';
+        desc.textContent = 'Seluruh soal telah dijawab. Sesuai aturan, latihan ini hanya dapat dikerjakan 1 kali dan hasil akan langsung direkap.';
+      }
+
+      confirmBtn.onclick = () => {
+        closeModal();
+        finalizeQuizResults(false);
+      };
+
+      modal.classList.remove('hidden');
+    }
+
+    function closeModal() {
+      document.getElementById('confirm-modal').classList.add('hidden');
+    }
+
+    async function finalizeQuizResults(isAutoSubmit = false) {
+      if (examSubmitted) return;
+      examSubmitted = true;
+
+      if (timerInterval) clearInterval(timerInterval);
+
+      let totalScore = 0;
+      let correctCount = 0;
+      let incorrectCount = 0;
+
+      // Pemetaan 5 Domain Subtopik untuk Analisis Diagnostik Detail
+      const subtopicTracker = {
+        'Perbandingan Trigonometri Segitiga Siku-siku': { correct: 0, total: 2, qIds: [1, 8], advice: 'Perkuat pemahaman rumus perbandingan sisi (depan/samping/miring) dan relasi selisih sudut.' },
+        'Sudut Istimewa & Identitas Dasar': { correct: 0, total: 2, qIds: [2, 5], advice: 'Perdalam tabel sudut istimewa serta manipulasi aljabar identitas Pythagoras dasar.' },
+        'Koordinat Cartesius & Kuadran Sudut': { correct: 0, total: 2, qIds: [3, 4], advice: 'Fokuskan latihan aturan tanda kuadran (Kuadran II dan IV) pada koordinat Cartesius.' },
+        'Aplikasi Kontekstual Sudut Elevasi': { correct: 0, total: 2, qIds: [6, 10], advice: 'Latih permodelan visual sistem persamaan tangen bertingkat pada klinometer dan tiang gedung.' },
+        'Persamaan Linear & Manipulasi Rasional': { correct: 0, total: 2, qIds: [7, 9], advice: 'Kuasai teknik perkalian silang aljabar rasional trigonometri dan perasionalan bentuk akar.' }
+      };
+
+      QUIZ_QUESTIONS.forEach(q => {
+        const userAns = userAnswers[q.id];
+        let isQuestionCorrect = false;
+
+        if (q.type === 'mcq') {
+          if (userAns === q.correctAnswer) {
+            isQuestionCorrect = true;
+            totalScore += 10;
+            correctCount++;
+          } else {
+            incorrectCount++;
+          }
+        } else if (q.type === 'matrix') {
+          const map = userAns || {};
+          let allCorrect = q.statements.every(s => map[s.id] === s.correct);
+          if (allCorrect) {
+            isQuestionCorrect = true;
+            totalScore += 10;
+            correctCount++;
+          } else {
+            // Hitung poin proporsional
+            let countBenar = q.statements.filter(s => map[s.id] === s.correct).length;
+            totalScore += Math.round((countBenar / q.statements.length) * 10);
+            incorrectCount++;
+          }
+        }
+
+        if (isQuestionCorrect && subtopicTracker[q.subtopicName]) {
+          subtopicTracker[q.subtopicName].correct++;
+        }
+      });
+
+      // Format string analisis latihan sesuai instruksi:
+      // subtopik .... (banyak benar/jumlah soal subtopik tersebut) | subtopik .... (banyak benar/jumlah soal subtopik tersebut)
+      const diagnosticSummary = Object.keys(subtopicTracker).map(subName => {
+        const item = subtopicTracker[subName];
+        return `subtopik ${subName} (${item.correct}/${item.total})`;
+      }).join(' | ');
+
+      const formattedRemainingTime = formatTime(timeRemaining);
+
+      const completedRecord = {
+        isFinished: true,
+        studentName: studentInfo.name,
+        studentClass: studentInfo.class,
+        score: totalScore,
+        correctCount: correctCount,
+        incorrectCount: incorrectCount,
+        timeRemaining: formattedRemainingTime,
+        diagnosticSummary: diagnosticSummary,
+        subtopicTracker: subtopicTracker,
+        timestamp: new Date().toLocaleString('id-ID')
+      };
+
+      // Simpan status pengerjaan selesai ke IndexedDB (1 kali pengerjaan)
+      await dbSave('tka_completed_exam', completedRecord);
+      await dbClear('tka_active_draft');
+
+      // Tampilkan halaman laporan hasil
+      renderCompletedResultsView(completedRecord);
+
+      // Sinkronkan ke Google Spreadsheet via Web App Apps Script
+      syncDataToGoogleSheet(completedRecord);
+    }
+
+    function renderCompletedResultsView(record) {
+      document.getElementById('view-welcome').classList.add('hidden');
+      document.getElementById('view-quiz').classList.add('hidden');
+      document.getElementById('view-schedule-locked').classList.add('hidden');
+      document.getElementById('view-result').classList.remove('hidden');
+      document.getElementById('exam-timer-wrapper').classList.add('hidden');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+
+      document.getElementById('result-student-name').textContent = record.studentName || '-';
+      document.getElementById('result-student-class').textContent = record.studentClass || '-';
+      document.getElementById('result-student-timer').textContent = record.timeRemaining || '00:00';
+
+      document.getElementById('score-display').textContent = record.score;
+      document.getElementById('correct-count-display').textContent = record.correctCount;
+      document.getElementById('incorrect-count-display').textContent = record.incorrectCount;
+
+      const badge = document.getElementById('score-status-badge');
+      if (record.score >= 80) {
+        badge.textContent = 'Sangat Memuaskan (Mastery)';
+        badge.className = 'text-xs bg-emerald-400 text-emerald-950 px-2.5 py-0.5 rounded-full inline-block font-bold';
+        if (typeof confetti === 'function') {
+          confetti({ particleCount: 70, spread: 60, origin: { y: 0.6 } });
+        }
+      } else if (record.score >= 60) {
+        badge.textContent = 'Cukup Baik (Perlu Konsolidasi)';
+        badge.className = 'text-xs bg-amber-300 text-amber-950 px-2.5 py-0.5 rounded-full inline-block font-bold';
+      } else {
+        badge.textContent = 'Perlu Pendampingan Intensif';
+        badge.className = 'text-xs bg-rose-400 text-rose-950 px-2.5 py-0.5 rounded-full inline-block font-bold';
+      }
+
+      // Render kartu diagnostik materi
+      const container = document.getElementById('diagnostic-breakdown-container');
+      container.innerHTML = '';
+
+      Object.keys(record.subtopicTracker || {}).forEach(subName => {
+        const item = record.subtopicTracker[subName];
+        const pct = Math.round((item.correct / item.total) * 100);
+
+        let statusClass = '';
+        let badgeText = '';
+        let progressBg = '';
+
+        if (pct === 100) {
+          statusClass = 'border-emerald-200 bg-emerald-50/20';
+          badgeText = 'Kuasai Penuh ✓';
+          progressBg = 'bg-emerald-500';
+        } else if (pct >= 50) {
+          statusClass = 'border-amber-200 bg-amber-50/20';
+          badgeText = 'Perlu Penguatan';
+          progressBg = 'bg-amber-500';
+        } else {
+          statusClass = 'border-rose-200 bg-rose-50/20';
+          badgeText = 'Prioritas Konsultasi';
+          progressBg = 'bg-rose-500';
+        }
+
+        const card = document.createElement('div');
+        card.className = `border rounded-2xl p-4 sm:p-5 transition bg-white space-y-3 ${statusClass}`;
+        card.innerHTML = `
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <div>
+              <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Soal No: ${item.qIds.join(', ')}</span>
+              <h4 class="font-bold text-slate-900 text-base">${subName}</h4>
+            </div>
+            <div class="flex items-center space-x-3">
+              <span class="text-xs font-bold px-2.5 py-1 rounded-full ${pct === 100 ? 'bg-emerald-100 text-emerald-800' : pct >= 50 ? 'bg-amber-100 text-amber-800' : 'bg-rose-100 text-rose-800'}">
+                ${badgeText} (${item.correct}/${item.total})
+              </span>
+              <span class="font-extrabold text-sm text-slate-800">${pct}%</span>
+            </div>
+          </div>
+          <div class="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
+            <div class="h-full ${progressBg} rounded-full" style="width: ${pct}%"></div>
+          </div>
+          <p class="text-xs sm:text-sm text-slate-600 pt-1">
+            <strong>Catatan Guru:</strong> ${item.advice}
+          </p>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    async function syncDataToGoogleSheet(record) {
+      const syncStatus = document.getElementById('gsheet-sync-status');
+      const syncIcon = document.getElementById('gsheet-sync-icon');
+      const syncText = document.getElementById('gsheet-sync-text');
+
+      if (!GOOGLE_SCRIPT_URL || GOOGLE_SCRIPT_URL.includes("YOUR_DEPLOYMENT_ID")) {
+        syncIcon.className = 'fa-solid fa-circle-check text-emerald-600';
+        syncText.textContent = 'Hasil latihan tersimpan di perangkat. (Hubungkan URL Google Apps Script di kode untuk sinkronisasi ke Spreadsheet TKA MAT4).';
+        return;
+      }
+
+      try {
+        const payload = {
+          studentName: record.studentName,
+          studentClass: record.studentClass,
+          score: record.score,
+          correctCount: record.correctCount,
+          incorrectCount: record.incorrectCount,
+          timeRemaining: record.timeRemaining,
+          diagnosticSummary: record.diagnosticSummary
+        };
+
+        // Kirim data via fetch dengan mode text/plain untuk melewati restriksi CORS Google Apps Script
+        await fetch(GOOGLE_SCRIPT_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: {
+            'Content-Type': 'text/plain;charset=utf-8'
+          },
+          body: JSON.stringify(payload)
+        });
+
+        syncIcon.className = 'fa-solid fa-circle-check text-emerald-600';
+        syncText.textContent = 'Data pengerjaan berhasil disinkronkan ke Spreadsheet TKA MAT4.';
+      } catch (err) {
+        syncIcon.className = 'fa-solid fa-triangle-exclamation text-amber-600';
+        syncText.textContent = 'Gagal mengirim otomatis ke spreadsheet, namun skor Anda tetap aman tersimpan di browser.';
+        console.error('Spreadsheet sync error:', err);
+      }
+    }
+
+    window.addEventListener('DOMContentLoaded', async () => {
+      // 1. Cek apakah batas waktu pengerjaan (deadline) berlaku
+      const isScheduleOpen = checkDeadlineSchedule();
+      if (!isScheduleOpen) return;
+
+      // 2. Cek apakah siswa sudah pernah mengerjakan hingga selesai (1 kali pengerjaan)
+      const hasCompleted = await checkExistingCompletedExam();
+      if (hasCompleted) return;
+
+      // 3. Cek apakah ada draf sesi pengerjaan tersimpan sebelumnya (autosave)
+      await checkSavedDraftSession();
+
+      // Render MathJax jika ada formula awal
+      if (window.MathJax && window.MathJax.typesetPromise) {
+        window.MathJax.typesetPromise();
+      }
+    });
+  </script>
+</body>
+</html>
